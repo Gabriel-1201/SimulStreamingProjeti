@@ -171,7 +171,10 @@ def main_server(factory, add_args):
             logger.info('Connected to client on {}'.format(addr))
             connection = Connection(conn)
             proc = ServerProcessor(connection, online, min_chunk)
-            proc.process()
+            try:
+                proc.process()
+            except Exception as e:
+                print(f"Exception on process: {e}")
             conn.close()
             logger.info('Connection to client closed')
     logger.info('Connection closed, terminating.')
