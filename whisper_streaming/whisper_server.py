@@ -69,7 +69,7 @@ class ServerProcessor:
             raw_bytes = self.connection.non_blocking_receive_audio()
             if not raw_bytes:
                 break
-#            print("received audio:",len(raw_bytes), "bytes", raw_bytes[:10])
+            print("received audio:",len(raw_bytes), "bytes", raw_bytes[:10])
             sf = soundfile.SoundFile(io.BytesIO(raw_bytes), channels=1,endian="LITTLE",samplerate=SAMPLING_RATE, subtype="PCM_16",format="RAW")
             audio, _ = librosa.load(sf,sr=SAMPLING_RATE,dtype=np.float32)
             out.append(audio)
@@ -100,10 +100,12 @@ class ServerProcessor:
         while True:
             a = self.receive_audio_chunk()
             if a is None:
+                print("Chunk de áudio é vazio")
                 break
             self.online_asr_proc.insert_audio_chunk(a)
             o = self.online_asr_proc.process_iter()
             try:
+                print("Enviando retorno")
                 self.send_result(o)
             except BrokenPipeError:
                 logger.info("broken pipe -- connection closed?")
@@ -145,7 +147,7 @@ def main_server(factory, add_args):
         min_chunk = args.vac_chunk_size
     else:
         min_chunk = args.min_chunk_size
-
+    print(f"O VALOR DE MINCHUNK É {min_chunk}")
     # warm up the ASR because the very first transcribe takes more time than the others. 
     # Test results in https://github.com/ufal/whisper_streaming/pull/81
     msg = "Whisper is not warmed up. The first chunk processing may take longer."
