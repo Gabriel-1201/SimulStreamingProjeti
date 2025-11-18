@@ -1,1 +1,1 @@
-python simulstreaming_whisper_server.py --language pt --task transcribe --host 0.0.0.0 --model_path ./models/medium.pt
+python simulstreaming_whisper_server.py --language pt --task transcribe --host 0.0.0.0 --model_path ./models/medium.pt --warmup-file warmup.mp3
